@@ -6,6 +6,7 @@ import logging
 import threading
 import time
 
+from discovery import DiscoveryPublisher
 import paho.mqtt.client as mqtt
 
 
@@ -117,6 +118,7 @@ class MQTTBridge:
 
         # Connect cameras after MQTT is ready
         for camera in self.cameras.values():
+            self.discovery.publish_camera(camera)
             self._connect_camera(camera)
         
         self.poll_thread = threading.Thread(
