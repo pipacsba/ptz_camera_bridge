@@ -108,7 +108,6 @@ class DiscoveryPublisher:
             "value_template": value_template,
             "payload_on": "true",
             "payload_off": "false",
-            "device_class": "moving",
             "device": device,
         }
 
