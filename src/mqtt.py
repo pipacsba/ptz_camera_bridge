@@ -54,6 +54,11 @@ class MQTTBridge:
         self.poll_thread = None
         self.running = False
 
+        self.discovery = DiscoveryPublisher(
+            self.client,
+            self.topic_prefix,
+            )
+
 
     def run(self):
 
