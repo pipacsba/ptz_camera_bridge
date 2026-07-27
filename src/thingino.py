@@ -100,30 +100,37 @@ class ThinginoCamera(Camera):
 
         position = None
 
-        if status.Position:
+        if getattr(status, "Position", None):
+
+            zoom = None
+
+            if getattr(status.Position, "Zoom", None):
+                zoom = status.Position.Zoom.x
 
             position = PTZPosition(
                 pan=status.Position.PanTilt.x,
                 tilt=status.Position.PanTilt.y,
-                zoom=(
-                    status.Position.Zoom.x
-                    zoom=None
-                    if getattr(status.Position, "Zoom", None):
-                        zoom=status.Position.Zoom.x
-                ),
+                zoom=zoom,
             )
 
         moving = False
-        
-        if getattr(status, "MoveStatus", None):
+
+        move_status = getattr(
+            status,
+            "MoveStatus",
+            None
+        )
+
+        if move_status:
             moving = (
-                str(status.MoveStatus.PanTilt)
+                str(move_status.PanTilt)
                 != "IDLE"
             )
-                return CameraState(
-                    position=position,
-                    moving=moving,
-                )
+
+        return CameraState(
+            position=position,
+            moving=moving,
+        )
 
 
     def stop(self):
