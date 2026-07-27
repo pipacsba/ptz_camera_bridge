@@ -24,8 +24,7 @@ class Camera(ABC):
 
     All camera implementations must provide these methods.
     """
-
-    def __init__(self, name):
+    def __init__(self, name, manufacturer="Unknown", model="Unknown"):
         self.name = name
         self.manufacturer = manufacturer
         self.model = model
