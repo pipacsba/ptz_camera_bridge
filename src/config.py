@@ -23,6 +23,8 @@ class CameraConfig:
     port: int
     username: str
     password: str
+    manufacturer: str
+    model: str
 
 
 class Config:
@@ -97,6 +99,8 @@ class Config:
                 port=cfg.get("port", 80),
                 username=cfg["username"],
                 password=cfg["password"],
+                manufacturer=cfg.get("manufacturer", "Unknown"),
+                model=cfg.get("model", "Unknown"),
             )
 
         if not cameras:
