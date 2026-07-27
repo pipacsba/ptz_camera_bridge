@@ -1,17 +1,19 @@
 services:
-  ptz-bridge:
-    container_name: ptz-bridge
-    image: ptz-bridge:latest
-    restart: unless-stopped
+  ptz-camera-bridge:
+    container_name: ptz-camera-bridge
 
-    networks:
-      - camera-net
+    build: .
+
+    restart: unless-stopped
 
     volumes:
       - ./config.yaml:/app/config.yaml:ro
 
     environment:
       - TZ=Europe/Vienna
+
+    networks:
+      - camera-net
 
 
 networks:
