@@ -98,3 +98,11 @@ class Camera(ABC):
         Return current camera state.
         """
         pass
+
+    @property
+    def manufacturer(self):
+        return "Thingino"
+    
+    @property
+    def model(self):
+        return "Sonoff PT2"
