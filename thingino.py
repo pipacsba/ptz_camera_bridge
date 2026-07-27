@@ -113,17 +113,16 @@ class ThinginoCamera(Camera):
             )
 
         moving = False
-
-        if status.MoveStatus:
+        
+        if getattr(status, "MoveStatus", None):
             moving = (
                 str(status.MoveStatus.PanTilt)
                 != "IDLE"
             )
-
-        return CameraState(
-            position=position,
-            moving=moving,
-        )
+                return CameraState(
+                    position=position,
+                    moving=moving,
+                )
 
 
     def move(
