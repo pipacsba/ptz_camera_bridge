@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# camera.py
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
