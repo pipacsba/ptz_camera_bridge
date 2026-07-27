@@ -3,7 +3,7 @@
 
 import json
 import logging
-import threading
+#import threading
 
 import paho.mqtt.client as mqtt
 
@@ -30,7 +30,9 @@ class MQTTBridge:
 
         self.cameras = cameras
 
-        self.client = mqtt.Client()
+        self.client = mqtt.Client(
+            mqtt.CallbackAPIVersion.VERSION1
+        )
 
         if username:
             self.client.username_pw_set(
@@ -112,14 +114,11 @@ class MQTTBridge:
 
         # Connect cameras after MQTT is ready
         for camera in self.cameras.values():
-            try:
-                camera.connect()
-
-            except Exception:
-                self.log.exception(
-                    "Camera connection failed: %s",
-                    camera.name,
-                )
+            threading.Thread(
+                target=self._connect_camera,
+                args=(camera,),
+                daemon=True
+            ).start()
 
 
     def _on_message(
@@ -298,3 +297,13 @@ class MQTTBridge:
             json.dumps(payload),
             retain=True,
         )
+
+    def _connect_camera(self, camera):
+    
+        try:
+            camera.connect()
+    
+        except Exception:
+            self.log.exception(
+                "Camera connection failed"
+            )
