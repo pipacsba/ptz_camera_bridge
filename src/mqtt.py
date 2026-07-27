@@ -295,11 +295,7 @@ class MQTTBridge:
         )
 
 
-        self.client.publish(
-            topic,
-            json.dumps(payload),
-            retain=True,
-        )
+        self.client.publish( topic, json.dumps(payload), qos=1, retain=True, )
 
         self.log.debug(
             "%s pan=%s tilt=%s moving=%s",
