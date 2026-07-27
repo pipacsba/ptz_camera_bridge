@@ -4,6 +4,7 @@
 import json
 import logging
 import threading
+import time
 
 import paho.mqtt.client as mqtt
 
@@ -48,6 +49,8 @@ class MQTTBridge:
             self._on_message
         )
 
+        self.state_cache = {}
+        self.poll_thread = None
         self.running = False
 
 
@@ -114,12 +117,13 @@ class MQTTBridge:
 
         # Connect cameras after MQTT is ready
         for camera in self.cameras.values():
-            threading.Thread(
-                target=self._connect_camera,
-                args=(camera,),
-                daemon=True
-            ).start()
-
+            self._connect_camera(camera)
+        
+        self.poll_thread = threading.Thread(
+            target=self._state_monitor_loop,
+            daemon=True,
+        )
+        self.poll_thread.start()
 
     def _on_message(
         self,
@@ -263,17 +267,16 @@ class MQTTBridge:
         )
 
 
-    def publish_state(
-        self,
-        camera,
-    ):
+    def publish_state(self, camera, state=None):
 
-        state = camera.get_state()
+        if state is None:
+            state = camera.get_state()
+    
+        self.state_cache[camera.name] = state
 
         payload = {
             "moving": state.moving,
         }
-
 
         if state.position:
 
@@ -298,12 +301,57 @@ class MQTTBridge:
             retain=True,
         )
 
+        self.log.debug(
+            "%s pan=%s tilt=%s moving=%s",
+            camera.name,
+            state.position.pan if state.position else None,
+            state.position.tilt if state.position else None,
+            state.moving,
+        )
+
     def _connect_camera(self, camera):
     
         try:
             camera.connect()
     
+            state = camera.get_state()
+            self.publish_state(camera, state)
+    
         except Exception:
             self.log.exception(
-                "Camera connection failed"
+                "Camera connection failed: %s",
+                camera.name,
             )
+
+    def _state_monitor_loop(self):
+    
+        while self.running:
+    
+            for camera in self.cameras.values():
+    
+                try:
+    
+                    state = camera.get_state()
+    
+                    previous = self.state_cache.get(camera.name)
+    
+                    if previous != state:
+    
+                        self.publish_state(camera, state)
+    
+                except Exception:
+    
+                    self.log.exception(
+                        "Polling %s failed",
+                        camera.name,
+                    )
+    
+            delay = 5
+            
+            if any(
+                s and s.moving
+                for s in self.state_cache.values()
+            ):
+                delay = 0.2
+            
+            time.sleep(delay)
