@@ -91,7 +91,7 @@ class Config:
                     )
 
             cameras[name] = CameraConfig(
-                name=name,
+                name=cfg.get("name", name),
                 type=cfg["type"],
                 host=cfg["host"],
                 port=cfg.get("port", 80),
