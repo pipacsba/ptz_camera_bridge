@@ -3,7 +3,7 @@
 
 import json
 import logging
-#import threading
+import threading
 
 import paho.mqtt.client as mqtt
 
