@@ -132,6 +132,57 @@ class ThinginoCamera(Camera):
             moving=moving,
         )
 
+    def move(
+        self,
+        pan=0,
+        tilt=0,
+        zoom=0,
+    ):
+    
+        self._ensure_connected()
+    
+        current = self.get_state()
+    
+        if not current.position:
+            raise RuntimeError(
+                "Camera position unavailable"
+            )
+    
+        current_x = current.position.pan
+        current_y = current.position.tilt
+    
+        #
+        # Thingino PTZ correction
+        #
+        target_x = pan - current_x
+        target_y = current_y - tilt
+    
+        self.log.debug(
+            "Move request pan=%s tilt=%s "
+            "current=(%s,%s) delta=(%s,%s)",
+            pan,
+            tilt,
+            current_x,
+            current_y,
+            target_x,
+            target_y,
+        )
+    
+        request = self.ptz.create_type(
+            "RelativeMove"
+        )
+    
+        request.ProfileToken = self.profile_token
+    
+        request.Translation = {
+            "PanTilt": {
+                "x": target_x,
+                "y": target_y,
+            }
+        }
+    
+        self.ptz.RelativeMove(request)
+    
 
     def stop(self):
 
