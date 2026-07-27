@@ -107,8 +107,9 @@ class ThinginoCamera(Camera):
                 tilt=status.Position.PanTilt.y,
                 zoom=(
                     status.Position.Zoom.x
-                    if status.Position.Zoom
-                    else None
+                    zoom=None
+                    if getattr(status.Position, "Zoom", None):
+                        zoom=status.Position.Zoom.x
                 ),
             )
 
