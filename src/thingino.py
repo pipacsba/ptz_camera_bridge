@@ -17,8 +17,14 @@ class ThinginoCamera(Camera):
         port=80,
         username=None,
         password=None,
+        manufacturer="Thingino",
+        model="Unknown",
     ):
-        super().__init__(name)
+        super().__init__(
+            name=name,
+            manufacturer=manufacturer,
+            model=model,
+        )
 
         self.host = host
         self.port = port
