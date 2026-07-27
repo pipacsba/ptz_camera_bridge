@@ -89,100 +89,106 @@ class ThinginoCamera(Camera):
 
 
     def get_state(self) -> CameraState:
-
+    
         self._ensure_connected()
-
+    
         status = self.ptz.GetStatus(
             {
                 "ProfileToken": self.profile_token
             }
         )
-
+    
         position = None
-
-        if status.Position:
-
+    
+        if getattr(status, "Position", None):
+    
+            zoom = None
+    
+            if getattr(status.Position, "Zoom", None):
+                zoom = status.Position.Zoom.x
+    
             position = PTZPosition(
                 pan=status.Position.PanTilt.x,
                 tilt=status.Position.PanTilt.y,
-                zoom=(
-                    status.Position.Zoom.x
-                    zoom=None
-                    if getattr(status.Position, "Zoom", None):
-                        zoom=status.Position.Zoom.x
-                ),
+                zoom=zoom,
             )
-
+    
         moving = False
-        
-        if getattr(status, "MoveStatus", None):
+    
+        move_status = getattr(
+            status,
+            "MoveStatus",
+            None
+        )
+    
+        if move_status:
+    
             moving = (
-                str(status.MoveStatus.PanTilt)
+                str(move_status.PanTilt)
                 != "IDLE"
             )
-                return CameraState(
-                    position=position,
-                    moving=moving,
+    
+        return CameraState(
+            position=position,
+            moving=moving,
+        )
+        def move(
+            self,
+            pan=0,
+            tilt=0,
+            zoom=0,
+        ):
+    
+            self._ensure_connected()
+    
+            current = self.get_state()
+    
+            if not current.position:
+                raise RuntimeError(
+                    "Camera position unavailable"
                 )
-
-
-    def move(
-        self,
-        pan=0,
-        tilt=0,
-        zoom=0,
-    ):
-
-        self._ensure_connected()
-
-        current = self.get_state()
-
-        if not current.position:
-            raise RuntimeError(
-                "Camera position unavailable"
+    
+            current_x = current.position.pan
+            current_y = current.position.tilt
+    
+    
+            #
+            # Thingino PTZ correction
+            #
+            # Camera movement direction is inverted.
+            #
+            target_x = pan - current_x
+            target_y = current_y - tilt
+    
+    
+            self.log.debug(
+                "Move request pan=%s tilt=%s "
+                "current=(%s,%s) delta=(%s,%s)",
+                pan,
+                tilt,
+                current_x,
+                current_y,
+                target_x,
+                target_y,
             )
-
-        current_x = current.position.pan
-        current_y = current.position.tilt
-
-
-        #
-        # Thingino PTZ correction
-        #
-        # Camera movement direction is inverted.
-        #
-        target_x = pan - current_x
-        target_y = current_y - tilt
-
-
-        self.log.debug(
-            "Move request pan=%s tilt=%s "
-            "current=(%s,%s) delta=(%s,%s)",
-            pan,
-            tilt,
-            current_x,
-            current_y,
-            target_x,
-            target_y,
-        )
-
-
-        request = self.ptz.create_type(
-            "RelativeMove"
-        )
-
-        request.ProfileToken = (
-            self.profile_token
-        )
-
-        request.Translation = {
-            "PanTilt": {
-                "x": target_x,
-                "y": target_y,
+    
+    
+            request = self.ptz.create_type(
+                "RelativeMove"
+            )
+    
+            request.ProfileToken = (
+                self.profile_token
+            )
+    
+            request.Translation = {
+                "PanTilt": {
+                    "x": target_x,
+                    "y": target_y,
+                }
             }
-        }
-
-        self.ptz.RelativeMove(request)
+    
+            self.ptz.RelativeMove(request)
 
 
     def stop(self):
