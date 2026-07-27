@@ -322,6 +322,8 @@ class MQTTBridge:
     def _state_monitor_loop(self):
     
         while self.running:
+
+            self.log.debug("state monitor loop performed")
     
             for camera in self.cameras.values():
     
