@@ -18,8 +18,8 @@ class DiscoveryPublisher:
                 f"ptz_{camera.name}"
             ],
             "name": camera.name.replace("_", " ").title(),
-            "manufacturer": "Thingino",
-            "model": "Sonoff PT2",
+            "manufacturer": camera.manufacturer,
+            "model": camera.model,
         }
 
         self._publish_sensor(
