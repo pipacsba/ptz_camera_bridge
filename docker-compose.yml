@@ -11,12 +11,4 @@ services:
       - ./config.yaml:/app/config.yaml:ro
 
     environment:
-      - TZ=Europe/Vienna
-
-    networks:
-      - camera-net
-
-
-networks:
-  camera-net:
-    external: true
+      - TZ=Europe/Budapest
