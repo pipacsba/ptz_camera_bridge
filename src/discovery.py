@@ -74,6 +74,7 @@ class DiscoveryPublisher:
             "value_template": value_template,
             "unit_of_measurement": unit,
             "device": device,
+            "icon": "mdi:axis-arrow",
         }
 
         self.client.publish(
