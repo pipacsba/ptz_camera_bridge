@@ -30,6 +30,8 @@ def build_cameras(config):
                 port=camera_cfg.port,
                 username=camera_cfg.username,
                 password=camera_cfg.password,
+                manufacturer=camera_cfg.manufacturer,
+                model=camera_cfg.model,
             )
 
         else:
