@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# config.py
 
 from dataclasses import dataclass
 from pathlib import Path
