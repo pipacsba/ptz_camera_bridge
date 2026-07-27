@@ -8,6 +8,7 @@ import sys
 from config import Config
 from mqtt import MQTTBridge
 from thingino import ThinginoCamera
+from discovery import DiscoveryPublisher
 
 
 def setup_logging():
