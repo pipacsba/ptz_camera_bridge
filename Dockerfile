@@ -9,4 +9,6 @@ RUN pip install --no-cache-dir \
 
 COPY src/ .
 
+RUN python -m compileall .
+
 CMD ["python", "main.py"]
