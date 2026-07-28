@@ -365,6 +365,11 @@ class ThinginoCamera(Camera):
         request.ProfileToken = self.profile_token
     
         presets = self.ptz.GetPresets(request)
+
+        self.log.info(
+            "Available presets are: %s",
+            presets,
+        )
     
         self.presets = {
             preset.Name: preset.token
