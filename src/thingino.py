@@ -325,19 +325,20 @@ class ThinginoCamera(Camera):
     
         self._ensure_connected()
     
-        request = self.ptz.create_type(
-            "SetPreset"
-        )
+        request = self.ptz.create_type("SetPreset")
     
         request.ProfileToken = self.profile_token
-        request.PresetToken = str(preset)
         request.PresetName = name
+    
+        self.log.info(
+            "SetPreset request: %s",
+            request,
+        )
     
         response = self.ptz.SetPreset(request)
     
         self.log.info(
-            "Preset created: %s",
+            "SetPreset response type=%s value=%s",
+            type(response),
             response,
         )
-    
-        return response
