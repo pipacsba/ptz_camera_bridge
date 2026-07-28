@@ -39,7 +39,8 @@ class CameraConfig:
     password: str
     manufacturer: str
     model: str
-    device_id: str
+    device_id: str | None = None
+    mac: str | None = None
 
 
 class Config:
