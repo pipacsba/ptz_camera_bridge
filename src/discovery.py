@@ -43,7 +43,7 @@ class DiscoveryPublisher:
             camera: Camera implementation.
         """
         device = {
-            "identifiers": [ "59ed0c90be0f836074675f3fb7156450" ],
+            "identifiers": [ "frigate","59ed0c90be0f836074675f3fb7156450" ],
         }
         
         log.info(
