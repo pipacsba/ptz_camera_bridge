@@ -329,18 +329,15 @@ class ThinginoCamera(Camera):
             "SetPreset"
         )
     
-        request.ProfileToken = (
-            self.profile_token
-        )
-    
+        request.ProfileToken = self.profile_token
+        request.PresetToken = str(preset)
         request.PresetName = name
     
         response = self.ptz.SetPreset(request)
     
         self.log.info(
-            "Created preset '%s' token=%s",
-            name,
-            response.PresetToken,
+            "Preset created: %s",
+            response,
         )
     
-        return response.PresetToken
+        return response
