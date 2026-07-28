@@ -9,6 +9,9 @@
 from dataclasses import dataclass
 from pathlib import Path
 import yaml
+import logging
+
+log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -60,6 +63,11 @@ class Config:
         Load and validate the YAML configuration.
         """
 
+        log.info(
+            "Loading configuration from %s",
+            self.filename,
+        )
+        
         with self.filename.open(
             "r",
             encoding="utf-8",
@@ -71,6 +79,11 @@ class Config:
 
         self.mqtt = self._load_mqtt(data.get("mqtt", {}))
         self.cameras = self._load_cameras(data.get("cameras", {}))
+
+        log.info(
+            "Loaded %d camera configuration(s)",
+            len(self.cameras),
+        )
 
 
     def _load_mqtt(
