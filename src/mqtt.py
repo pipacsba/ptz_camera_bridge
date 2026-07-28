@@ -313,9 +313,14 @@ class MQTTBridge:
 
         elif action == "set_preset":
         
-            camera.set_preset(
-                command["name"]
-            )
+            name = command.get("name")
+        
+            if not name:
+                raise ValueError(
+                    "set_preset requires 'name'"
+                )
+        
+            camera.set_preset(name)
 
         else:
             handled = False
