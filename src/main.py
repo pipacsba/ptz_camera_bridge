@@ -56,6 +56,7 @@ def build_cameras(config):
                 password=camera_cfg.password,
                 manufacturer=camera_cfg.manufacturer,
                 model=camera_cfg.model,
+                device_id=camera_cfg.device_id,
             )
 
         else:
