@@ -11,7 +11,9 @@ Currently exposes:
 """
 
 import json
+import logging
 
+log = logging.getLogger(__name__)
 
 class DiscoveryPublisher:
     """
@@ -73,6 +75,11 @@ class DiscoveryPublisher:
             device,
         )
 
+        log.info(
+            "Published Home Assistant discovery for camera %s",
+            camera.name,
+        )
+
     def _state_topic(self, camera):
         """Return the MQTT state topic for a camera."""
         return f"{self.topic_prefix}/{camera.name}/state"
@@ -112,6 +119,10 @@ class DiscoveryPublisher:
             "device": device,
         }
 
+        log.debug(
+            "Published discovery topic %s",
+            topic,
+        )
         self.client.publish(
             topic,
             json.dumps(payload),
@@ -152,6 +163,11 @@ class DiscoveryPublisher:
             "device": device,
         }
 
+        log.debug(
+            "Published discovery topic %s",
+            topic,
+        )
+        
         self.client.publish(
             topic,
             json.dumps(payload),
