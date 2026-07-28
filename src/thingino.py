@@ -321,26 +321,26 @@ class ThinginoCamera(Camera):
             preset,
         )
 
-def set_preset(self, preset, name):
-
-    self._ensure_connected()
-
-    request = self.ptz.create_type(
-        "SetPreset"
-    )
-
-    request.ProfileToken = (
-        self.profile_token
-    )
-
-    request.PresetName = name
-
-    response = self.ptz.SetPreset(request)
-
-    self.log.info(
-        "Created preset '%s' token=%s",
-        name,
-        response.PresetToken,
-    )
-
-    return response.PresetToken
+    def set_preset(self, preset, name):
+    
+        self._ensure_connected()
+    
+        request = self.ptz.create_type(
+            "SetPreset"
+        )
+    
+        request.ProfileToken = (
+            self.profile_token
+        )
+    
+        request.PresetName = name
+    
+        response = self.ptz.SetPreset(request)
+    
+        self.log.info(
+            "Created preset '%s' token=%s",
+            name,
+            response.PresetToken,
+        )
+    
+        return response.PresetToken
