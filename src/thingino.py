@@ -61,6 +61,7 @@ class ThinginoCamera(Camera):
         self.ptz = None
         self.media = None
         self.profile_token = None
+        self.mac = None
 
 
     def connect(self):
@@ -86,7 +87,11 @@ class ThinginoCamera(Camera):
         interfaces = self.devicemgmt.GetNetworkInterfaces()
         
         self.log.info("Interfaces: %s", interfaces)
-
+        
+        for interface in interfaces:
+            if interface.Info.HwAddress:
+                self.mac = interface.Info.HwAddress.lower()
+                break
         
         self.ptz = self.cam.create_ptz_service()
         self.media = self.cam.create_media_service()
