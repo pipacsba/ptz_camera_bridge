@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 # main.py
+"""
+MQTT PTZ Camera Bridge.
+
+Entry point for the application.
+Loads configuration, creates camera instances,
+and starts the MQTT bridge.
+"""
 
 import logging
 import signal
@@ -10,7 +17,14 @@ from mqtt import MQTTBridge
 from thingino import ThinginoCamera
 from discovery import DiscoveryPublisher
 
+
 def setup_logging():
+    """
+    Configure application logging.
+
+    force=True ensures that Docker or imported libraries
+    cannot override our logging configuration.
+    """
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)-8s %(name)s: %(message)s",
@@ -19,6 +33,15 @@ def setup_logging():
 
 
 def build_cameras(config):
+    """
+    Create camera instances from configuration.
+
+    Args:
+        config: Loaded application configuration.
+
+    Returns:
+        Dictionary of camera name -> Camera instance.
+    """
     cameras = {}
 
     for name, camera_cfg in config.cameras.items():
@@ -44,6 +67,9 @@ def build_cameras(config):
 
 
 def main():
+    """
+    Application entry point.
+    """
     setup_logging()
 
     log = logging.getLogger("main")
@@ -63,30 +89,50 @@ def main():
         )
 
     except Exception:
-        log.exception("Failed to initialize PTZ bridge")
+        log.exception(
+            "Failed to initialize PTZ bridge"
+        )
         sys.exit(1)
 
 
     def shutdown(*_):
-        log.info("Stopping PTZ bridge...")
+        """
+        Handle application termination.
+        """
+        log.info(
+            "Stopping PTZ bridge..."
+        )
+
         bridge.stop()
+
         sys.exit(0)
 
 
-    signal.signal(signal.SIGINT, shutdown)
-    signal.signal(signal.SIGTERM, shutdown)
+    signal.signal(
+        signal.SIGINT,
+        shutdown,
+    )
+
+    signal.signal(
+        signal.SIGTERM,
+        shutdown,
+    )
 
 
     log.info(
         "Starting MQTT PTZ bridge with %d camera(s)",
-        len(cameras)
+        len(cameras),
     )
 
     for name in cameras:
-        log.info("Configured camera: %s", name)
+        log.info(
+            "Configured camera: %s",
+            name,
+        )
 
     bridge.run()
 
 
 if __name__ == "__main__":
     main()
+
