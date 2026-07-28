@@ -391,7 +391,7 @@ class MQTTBridge:
             presets = camera.get_presets()
     
             if presets:
-                self.discovery.publish_select(
+                self.discovery._publish_select(
                     camera,
                     presets,
                 )
