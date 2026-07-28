@@ -48,6 +48,11 @@ class DiscoveryPublisher:
             "manufacturer": camera.manufacturer,
             "model": camera.model,
         }
+        
+        log.debug(
+            "Device to be published is %s",
+            device,
+        )
 
         self._publish_sensor(
             camera,
