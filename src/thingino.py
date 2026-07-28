@@ -21,6 +21,7 @@ import logging
 from onvif import ONVIFCamera
 from camera import Camera, CameraState, PTZPosition
 
+log = logging.getLogger(__name__)
 
 class ThinginoCamera(Camera):
     """
@@ -163,7 +164,14 @@ class ThinginoCamera(Camera):
             moving = (
                 str(move_status.PanTilt)
                 != "IDLE"
-            )
+            
+        self.log.debug(
+            "Camera state: pan=%s tilt=%s zoom=%s moving=%s",
+            position.pan if position else None,
+            position.tilt if position else None,
+            position.zoom if position else None,
+            moving,
+        )
 
         return CameraState(
             position=position,
@@ -244,6 +252,10 @@ class ThinginoCamera(Camera):
 
         self.ptz.Stop(request)
 
+        self.log.debug(
+            "Stopping PTZ movement"
+        )
+
 
     def home(self):
         """
@@ -266,6 +278,10 @@ class ThinginoCamera(Camera):
         }
 
         self.ptz.AbsoluteMove(request)
+        
+        self.log.debug(
+            "Moving camera to home position"
+        )
 
 
     def goto_preset(self, preset):
@@ -284,6 +300,10 @@ class ThinginoCamera(Camera):
 
         self.ptz.GotoPreset(request)
 
+        self.log.debug(
+            "Going to preset %s",
+            preset,
+        )
 
     def set_preset(self, preset, name):
         """
@@ -301,3 +321,9 @@ class ThinginoCamera(Camera):
         request.PresetName = name
 
         self.ptz.SetPreset(request)
+
+        self.log.debug(
+            "Setting preset %s (%s)",
+            preset,
+            name,
+        )
