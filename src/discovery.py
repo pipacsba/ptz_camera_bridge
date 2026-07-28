@@ -43,7 +43,10 @@ class DiscoveryPublisher:
             camera: Camera implementation.
         """
         device = {
-            "identifiers": [ "01K8D5KB1VBH56CZAK0JHTT294" ],
+            "identifiers": [ camera.device_id ],
+            "name": camera.name.replace("_", " ").title(),
+            "manufacturer": camera.manufacturer,
+            "model": camera.model,
         }
         
         log.info(
