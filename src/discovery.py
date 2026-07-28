@@ -49,7 +49,7 @@ class DiscoveryPublisher:
             "model": camera.model,
         }
         
-        log.debug(
+        log.info(
             "Device to be published is %s",
             device,
         )
