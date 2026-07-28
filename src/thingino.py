@@ -81,6 +81,13 @@ class ThinginoCamera(Camera):
             self.password,
         )
 
+        self.devicemgmt = self.cam.create_devicemgmt_service()
+        
+        interfaces = self.devicemgmt.GetNetworkInterfaces()
+        
+        self.log.info("Interfaces: %s", interfaces)
+
+        
         self.ptz = self.cam.create_ptz_service()
         self.media = self.cam.create_media_service()
 
