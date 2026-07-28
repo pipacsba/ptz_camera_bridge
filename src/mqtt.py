@@ -311,15 +311,10 @@ class MQTTBridge:
                 command["preset"]
             )
 
-
         elif action == "set_preset":
         
             camera.set_preset(
-                command["preset"],
-                command.get(
-                    "name",
-                    "",
-                ),
+                command["name"]
             )
 
         else:
