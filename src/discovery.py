@@ -220,6 +220,11 @@ class DiscoveryPublisher:
             "options": list(presets.keys()),
             "device": device,
         }
+
+        log.debug(
+            "Published discovery topic %s",
+            topic,
+        )
     
         self.client.publish(
             topic,
