@@ -44,9 +44,6 @@ class DiscoveryPublisher:
         """
         device = {
             "identifiers": [ "01K8D5KB1VBH56CZAK0JHTT294:sonoff_pt2" ],
-            "name": camera.name.replace("_", " ").title(),
-            "manufacturer": camera.manufacturer,
-            "model": camera.model,
         }
         
         log.info(
