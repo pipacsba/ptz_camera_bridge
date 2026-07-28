@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 # config.py
+#
+# Configuration loader for the MQTT PTZ bridge.
+#
+# Reads the YAML configuration file, validates required settings,
+# and exposes the parsed configuration as strongly typed dataclasses.
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -8,6 +13,9 @@ import yaml
 
 @dataclass
 class MQTTConfig:
+    """
+    MQTT broker configuration.
+    """
     host: str
     port: int = 1883
     username: str | None = None
@@ -17,6 +25,9 @@ class MQTTConfig:
 
 @dataclass
 class CameraConfig:
+    """
+    Configuration for a single camera.
+    """
     name: str
     type: str
     host: str
@@ -28,6 +39,11 @@ class CameraConfig:
 
 
 class Config:
+    """
+    Loads and validates the bridge configuration.
+
+    The configuration is read once during startup.
+    """
 
     def __init__(self, filename="config.yaml"):
         self.filename = Path(filename)
@@ -40,8 +56,14 @@ class Config:
         self._load()
 
     def _load(self):
+        """
+        Load and validate the YAML configuration.
+        """
 
-        with self.filename.open("r") as f:
+        with self.filename.open(
+            "r",
+            encoding="utf-8",
+        ) as f:
             data = yaml.safe_load(f)
 
         if not data:
@@ -51,8 +73,13 @@ class Config:
         self.cameras = self._load_cameras(data.get("cameras", {}))
 
 
-    def _load_mqtt(self, data):
-
+    def _load_mqtt(
+        self,
+        data: dict,
+    ) -> MQTTConfig:
+        """
+        Parse the MQTT configuration section.
+        """
         required = ["host"]
 
         for item in required:
@@ -73,8 +100,13 @@ class Config:
         )
 
 
-    def _load_cameras(self, data):
-
+    def _load_cameras(
+        self,
+        data: dict,
+    ) -> dict[str, CameraConfig]:
+        """
+        Parse all configured cameras.
+        """
         cameras = {}
 
         for name, cfg in data.items():
@@ -86,10 +118,10 @@ class Config:
                 "password",
             ]
 
-            for item in required:
-                if item not in cfg:
+            for field in required:
+                if field not in cfg:
                     raise ValueError(
-                        f"Camera '{name}' missing '{item}'"
+                        f"Camera '{name}' missing '{field}'"
                     )
 
             cameras[name] = CameraConfig(
