@@ -189,7 +189,7 @@ class DiscoveryPublisher:
     def publish_select(self, camera, presets):
     
         topic = (
-            f"homeassistant/select/"
+            f"{self.DISCOVERY_PREFIX}/select/"
             f"{camera.name}_preset/config"
         )
 
