@@ -315,6 +315,13 @@ class ThinginoCamera(Camera):
         Returns:
             Dictionary mapping preset names to preset tokens.
         """
+        if preset not in self.presets:
+            self.get_presets()
+        
+        if preset not in self.presets:
+            raise ValueError(
+                f"Unknown preset: {preset}"
+            )
     
         self._ensure_connected()
     
