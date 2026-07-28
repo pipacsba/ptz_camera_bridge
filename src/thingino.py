@@ -164,6 +164,7 @@ class ThinginoCamera(Camera):
             moving = (
                 str(move_status.PanTilt)
                 != "IDLE"
+            )
             
         self.log.debug(
             "Camera state: pan=%s tilt=%s zoom=%s moving=%s",
