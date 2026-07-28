@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 # mqtt.py
+"""
+MQTT bridge between camera implementations and Home Assistant.
+
+Handles:
+- MQTT command reception
+- Camera state publishing
+- Home Assistant discovery
+- Periodic camera state monitoring
+"""
 
 import json
 import logging
