@@ -87,7 +87,7 @@ class ThinginoCamera(Camera):
         
         interfaces = self.devicemgmt.GetNetworkInterfaces()
         
-        self.log.info("Interfaces: %s", interfaces)
+        self.log.debug("Interfaces: %s", interfaces)
         
         for interface in interfaces:
             if interface.Info.HwAddress:
