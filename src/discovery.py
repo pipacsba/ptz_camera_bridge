@@ -186,12 +186,19 @@ class DiscoveryPublisher:
             retain=True,
         )
 
-    def _publish_select(self, camera, presets, device):
+    def publish_select(self, camera, presets, device):
     
         topic = (
             f"homeassistant/select/"
             f"{camera.name}_preset/config"
         )
+
+        device = {
+            "identifiers": [ camera.device_id ],
+            "name": camera.name.replace("_", " ").title(),
+            "manufacturer": camera.manufacturer,
+            "model": camera.model,
+        }
     
         payload = {
             "name": f"{camera.name.title()} Preset",
