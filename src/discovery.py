@@ -186,7 +186,7 @@ class DiscoveryPublisher:
             retain=True,
         )
 
-    def publish_select(self, camera, presets):
+    def _publish_select(self, camera, presets):
     
         topic = (
             f"homeassistant/select/"
@@ -211,6 +211,7 @@ class DiscoveryPublisher:
                 '{"action":"goto_preset","name":"{{ value }}"}'
             ),
             "options": list(presets.keys()),
+            "device": device,
         }
     
         self.client.publish(
