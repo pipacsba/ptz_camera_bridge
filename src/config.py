@@ -39,6 +39,7 @@ class CameraConfig:
     password: str
     manufacturer: str
     model: str
+    device_id: str
 
 
 class Config:
