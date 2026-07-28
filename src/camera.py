@@ -57,6 +57,9 @@ class Camera(ABC):
         self.model = model
         self.device_id = device_id or f"ptz_{name}"
 
+        # Populated after connect() if available.
+        self.mac = None
+
 
     @abstractmethod
     def connect(self):
