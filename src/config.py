@@ -147,6 +147,7 @@ class Config:
                 password=cfg["password"],
                 manufacturer=cfg.get("manufacturer", "Unknown"),
                 model=cfg.get("model", "Unknown"),
+                device_id=cfg.get("device_id", f"ptz_{name}"),
             )
 
         if not cameras:
