@@ -317,7 +317,7 @@ class ThinginoCamera(Camera):
         )
     
         request.ProfileToken = self.profile_token
-        request.PresetToken = presets[preset]
+        request.PresetToken = self.presets[preset]
     
         self.ptz.GotoPreset(request)
 
