@@ -323,29 +323,46 @@ class ThinginoCamera(Camera):
             preset,
         )
 
-    def set_preset(self, preset, name):
+    def set_preset(self, name):
     
         self._ensure_connected()
     
-        request = self.ptz.create_type("SetPreset")
+        existing = self.get_presets()
+    
+        if name in existing:
+            self.log.warning(
+                "Preset '%s' already exists (token=%s)",
+                name,
+                existing[name],
+            )
+    
+            return existing[name]
+    
+    
+        request = self.ptz.create_type(
+            "SetPreset"
+        )
     
         request.ProfileToken = self.profile_token
         request.PresetName = name
     
-        self.log.info(
-            "SetPreset request: %s",
-            request,
-        )
-    
-        response = self.ptz.SetPreset(request)
+        token = self.ptz.SetPreset(request)
     
         self.log.info(
-            "SetPreset response type=%s value=%s",
-            type(response),
-            response,
+            "Created preset '%s' token=%s",
+            name,
+            token,
         )
+    
+        return token
 
     def get_presets(self):
+        """
+        Return available ONVIF presets.
+    
+        Returns:
+            Dictionary mapping preset names to tokens.
+        """
     
         self._ensure_connected()
     
@@ -357,11 +374,7 @@ class ThinginoCamera(Camera):
     
         presets = self.ptz.GetPresets(request)
     
-        for preset in presets:
-            self.log.info(
-                "Preset: token=%s name=%s",
-                preset.token,
-                preset.Name,
-            )
-    
-        return presets
+        return {
+            preset.Name: preset.token
+            for preset in presets
+        }
