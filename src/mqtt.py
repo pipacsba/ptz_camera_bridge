@@ -18,7 +18,6 @@ import paho.mqtt.client as mqtt
 
 from discovery import DiscoveryPublisher
 
-
 class MQTTBridge:
     """
     Handles MQTT communication between Home Assistant
@@ -60,7 +59,7 @@ class MQTTBridge:
         """
 
         
-        self.log = logging.getLogger("mqtt")
+        self.log = logging.getLogger(__name__)
 
         self.broker = broker
         self.port = port
@@ -401,6 +400,11 @@ class MQTTBridge:
         - normal: every STATE_POLL_INTERVAL seconds
         - while moving: every MOVING_POLL_INTERVAL seconds
         """
+
+        self.log.info(
+            "Starting camera state monitor"
+        )
+        
         while self.running:
 
             for camera in self.cameras.values():
@@ -412,7 +416,10 @@ class MQTTBridge:
                     previous = self.state_cache.get(camera.name)
     
                     if previous != state:
-    
+                        self.log.debug(
+                            "State change detected for %s",
+                            camera.name,
+                        )
                         self.publish_state(camera, state)
     
                 except Exception:
