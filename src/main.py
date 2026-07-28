@@ -10,6 +10,7 @@ from mqtt import MQTTBridge
 from thingino import ThinginoCamera
 from discovery import DiscoveryPublisher
 
+print(logging.getLogger().handlers)
 
 def setup_logging():
     logging.basicConfig(
