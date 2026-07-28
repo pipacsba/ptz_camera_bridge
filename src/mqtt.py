@@ -393,7 +393,7 @@ class MQTTBridge:
             if presets:
                 self.discovery.publish_select(
                     camera,
-                    list(presets.keys()),
+                    camera.presets,
                 )
     
         except Exception:
