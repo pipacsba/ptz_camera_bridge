@@ -52,7 +52,7 @@ class DiscoveryPublisher:
 
         if camera.mac:
             device["connections"] = [
-                ("mac", camera.mac),
+                ("mac", camera.mac), ("frigate", "01K8D5KB1VBH56CZAK0JHTT294:sonoff_pt2"),
             ]
         
         log.info(
