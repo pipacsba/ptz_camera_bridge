@@ -379,16 +379,22 @@ class MQTTBridge:
         )
 
     def _connect_camera(self, camera):
-        """
-        Connect a camera and publish its initial state.
-        """
+    
         try:
             camera.connect()
-
-            self.presets[camera.name] = camera.get_presets()
-            
+    
+            # Publish initial state
             state = camera.get_state()
             self.publish_state(camera, state)
+    
+            # Publish preset selector if supported
+            presets = camera.get_presets()
+    
+            if presets:
+                self.discovery.publish_select(
+                    camera,
+                    list(presets.keys()),
+                )
     
         except Exception:
             self.log.exception(
