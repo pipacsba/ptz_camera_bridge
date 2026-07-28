@@ -221,7 +221,7 @@ class DiscoveryPublisher:
             "device": device,
         }
 
-        log.debug(
+        log.info(
             "Published discovery topic %s",
             topic,
         )
