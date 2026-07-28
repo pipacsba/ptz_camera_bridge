@@ -114,6 +114,11 @@ class ThinginoCamera(Camera):
         )
 
         self.get_presets()
+        
+        self.discovery.publish_select(
+            camera,
+            self.presets[camera.name],
+        )
 
 
     def disconnect(self):
