@@ -39,11 +39,13 @@ class ThinginoCamera(Camera):
         password=None,
         manufacturer="Thingino",
         model="Unknown",
+        device_id=None,
     ):
         super().__init__(
             name=name,
             manufacturer=manufacturer,
             model=model,
+            device_id=device_id,
         )
 
         self.host = host
