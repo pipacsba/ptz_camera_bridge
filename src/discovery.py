@@ -185,3 +185,37 @@ class DiscoveryPublisher:
             qos=1,
             retain=True,
         )
+
+    def publish_select(self, camera, presets):
+    
+        topic = (
+            f"homeassistant/select/"
+            f"{camera.name}_preset/config"
+        )
+    
+        payload = {
+            "name": f"{camera.name.title()} Preset",
+            "unique_id": f"ptz_{camera.name}_preset",
+            "state_topic": (
+                f"{self.topic_prefix}/"
+                f"{camera.name}/state"
+            ),
+            "command_topic": (
+                f"{self.topic_prefix}/"
+                f"{camera.name}/command"
+            ),
+            "value_template": (
+                "{{ value_json.preset }}"
+            ),
+            "command_template": (
+                '{"action":"goto_preset","name":"{{ value }}"}'
+            ),
+            "options": list(presets.keys()),
+        }
+    
+        self.client.publish(
+            topic,
+            json.dumps(payload),
+            qos=1,
+            retain=True,
+        )
