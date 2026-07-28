@@ -48,6 +48,11 @@ class DiscoveryPublisher:
             "manufacturer": camera.manufacturer,
             "model": camera.model,
         }
+
+        if camera.mac:
+            device["connections"] = [
+                ("mac", camera.mac),
+            ]
         
         log.info(
             "Device to be published is %s",
