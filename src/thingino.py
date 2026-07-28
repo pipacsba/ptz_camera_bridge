@@ -308,25 +308,24 @@ class ThinginoCamera(Camera):
 
 
     def goto_preset(self, preset):
-        """
-        Move camera to a stored preset position.
-        """
-
+    
         self._ensure_connected()
-
+    
+        presets = self.get_presets()
+    
+        if preset not in presets:
+            raise ValueError(
+                f"Unknown preset: {preset}"
+            )
+    
         request = self.ptz.create_type(
             "GotoPreset"
         )
-
+    
         request.ProfileToken = self.profile_token
-        request.PresetToken = str(preset)
-
+        request.PresetToken = presets[preset]
+    
         self.ptz.GotoPreset(request)
-
-        self.log.debug(
-            "Going to preset %s",
-            preset,
-        )
 
     def set_preset(self, name):
     
