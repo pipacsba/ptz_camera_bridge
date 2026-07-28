@@ -42,8 +42,11 @@ class DiscoveryPublisher:
         Args:
             camera: Camera implementation.
         """
+#            "identifiers": [ camera.device_id ],
         device = {
-            "identifiers": [ camera.device_id ],
+            "identifiers": [
+                ("frigate", "01K8D5KB1VBH56CZAK0JHTT294:sonoff_pt2")
+            ],
             "name": camera.name.replace("_", " ").title(),
             "manufacturer": camera.manufacturer,
             "model": camera.model,
