@@ -96,6 +96,8 @@ class MQTTBridge:
             self.topic_prefix,
         )
 
+        self.presets = {}
+
 
     def run(self):
         """
