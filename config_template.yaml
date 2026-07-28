@@ -14,3 +14,4 @@ cameras:
     port: 80
     username: thingino_username
     password: thingino_password
+    device_id: 59ed0c90be0f836074675f3fb7156450
