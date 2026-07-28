@@ -26,7 +26,7 @@ def setup_logging():
     cannot override our logging configuration.
     """
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format="%(asctime)s %(levelname)-8s %(name)s: %(message)s",
         force=True,
     )
