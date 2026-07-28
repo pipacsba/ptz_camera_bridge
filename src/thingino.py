@@ -321,31 +321,26 @@ class ThinginoCamera(Camera):
             preset,
         )
 
-    def set_preset(self, preset, name):
-        """
-        Store the current position as a preset.
-        """
+def set_preset(self, preset, name):
 
-        self._ensure_connected()
+    self._ensure_connected()
 
-        request = self.ptz.create_type(
-            "SetPreset"
-        )
+    request = self.ptz.create_type(
+        "SetPreset"
+    )
 
-        request.ProfileToken = self.profile_token
-        request.PresetToken = str(preset)
-        request.PresetName = name
+    request.ProfileToken = (
+        self.profile_token
+    )
 
-        response = self.ptz.SetPreset(request)
-        
-        self.log.info(
-            "Created preset: %s",
-            response.PresetToken
-        )
+    request.PresetName = name
 
-        
-        self.log.debug(
-            "Setting preset %s (%s)",
-            preset,
-            name,
-        )
+    response = self.ptz.SetPreset(request)
+
+    self.log.info(
+        "Created preset '%s' token=%s",
+        name,
+        response.PresetToken,
+    )
+
+    return response.PresetToken
