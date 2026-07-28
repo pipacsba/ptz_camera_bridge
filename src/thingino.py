@@ -308,35 +308,25 @@ class ThinginoCamera(Camera):
         )
 
 
-    def get_presets(self):
-        """
-        Return available ONVIF presets.
+    def goto_preset(self, preset):
     
-        Returns:
-            Dictionary mapping preset names to preset tokens.
-        """
+        self._ensure_connected()
+    
         if preset not in self.presets:
             self.get_presets()
         
         if preset not in self.presets:
             raise ValueError(
                 f"Unknown preset: {preset}"
-            )
-    
-        self._ensure_connected()
-    
+            )    
         request = self.ptz.create_type(
-            "GetPresets"
+            "GotoPreset"
         )
     
         request.ProfileToken = self.profile_token
+        request.PresetToken = presets[preset]
     
-        presets = self.ptz.GetPresets(request)
-    
-        return {
-            preset.Name: preset.token
-            for preset in presets
-        }
+        self.ptz.GotoPreset(request)
 
     def set_preset(self, name):
     
@@ -372,7 +362,7 @@ class ThinginoCamera(Camera):
         return token
 
     def get_presets(self):
-    
+
         self._ensure_connected()
     
         request = self.ptz.create_type(
