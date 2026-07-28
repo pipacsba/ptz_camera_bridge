@@ -51,6 +51,7 @@ class Camera(ABC):
         manufacturer="Unknown",
         model="Unknown",
         device_id=None,
+        mac=None,
     ):
         self.name = name
         self.manufacturer = manufacturer
