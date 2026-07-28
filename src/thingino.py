@@ -113,7 +113,7 @@ class ThinginoCamera(Camera):
             self.profile_token,
         )
 
-        self.get_presets()
+        #self.get_presets()
         
         self.discovery.publish_select(
             camera,
