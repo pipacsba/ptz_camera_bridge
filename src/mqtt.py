@@ -384,7 +384,9 @@ class MQTTBridge:
         """
         try:
             camera.connect()
-    
+
+            self.presets[camera.name] = camera.get_presets()
+            
             state = camera.get_state()
             self.publish_state(camera, state)
     
