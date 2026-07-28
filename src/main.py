@@ -72,7 +72,7 @@ def main():
     """
     setup_logging()
 
-    log = logging.getLogger("main")
+    log = logging.getLogger(__name__)
 
     try:
         config = Config("config.yaml")
