@@ -186,7 +186,7 @@ class DiscoveryPublisher:
             retain=True,
         )
 
-    def _publish_select(self, camera, presets):
+    def _publish_select(self, camera, presets, device):
     
         topic = (
             f"homeassistant/select/"
