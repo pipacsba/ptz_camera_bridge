@@ -1,0 +1,21 @@
+home/camera/sonoff_pt2/command
+  {
+  "action": "move",
+  "pan": 0,
+  "tilt": 0,
+  }
+
+  {
+    "action": "stop"
+  }
+
+  # pan: 0, tilt: -20
+  {
+  "action": "home"
+  }
+
+
+  {
+    "action": "set_preset",
+    "name": "Privacy"
+  }
