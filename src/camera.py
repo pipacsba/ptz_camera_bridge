@@ -136,3 +136,10 @@ class Camera(ABC):
         This method should never modify the camera state.
         """
         pass
+
+    @abstractmethod
+    def get_presets(self):
+        """
+        Return available presets.
+        """
+        pass
