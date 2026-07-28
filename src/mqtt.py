@@ -5,13 +5,30 @@ import json
 import logging
 import threading
 import time
+import paho.mqtt.client as mqtt
 
 from discovery import DiscoveryPublisher
-import paho.mqtt.client as mqtt
 
 
 class MQTTBridge:
+    """
+    Handles MQTT communication between Home Assistant
+    and PTZ cameras.
 
+    Responsibilities:
+    - Subscribe to camera command topics
+    - Execute PTZ commands
+    - Publish camera state
+    - Publish Home Assistant MQTT Discovery messages
+    - Monitor camera state changes
+    """
+    # Normal camera position refresh interval
+    STATE_POLL_INTERVAL = 5
+
+    # Faster refresh while camera is moving
+    # for smoother Home Assistant updates
+    MOVING_POLL_INTERVAL = 0.1
+    
     def __init__(
         self,
         broker,
@@ -21,7 +38,19 @@ class MQTTBridge:
         topic_prefix,
         cameras,
     ):
+        """
+        Initialize the MQTT bridge.
+    
+        Args:
+            broker: MQTT broker hostname or IP address.
+            port: MQTT broker port.
+            username: Optional MQTT username.
+            password: Optional MQTT password.
+            topic_prefix: Base MQTT topic for camera messages.
+            cameras: Dictionary containing configured cameras.
+        """
 
+        
         self.log = logging.getLogger("mqtt")
 
         self.broker = broker
@@ -57,11 +86,16 @@ class MQTTBridge:
         self.discovery = DiscoveryPublisher(
             self.client,
             self.topic_prefix,
-            )
+        )
 
 
     def run(self):
-
+        """
+        Connect to MQTT and start the event loop.
+    
+        The MQTT network loop runs in the current thread.
+        Incoming messages are handled through callbacks.
+        """
         self.log.info(
             "Connecting to MQTT %s:%s",
             self.broker,
@@ -80,7 +114,11 @@ class MQTTBridge:
 
 
     def stop(self):
-
+        """
+        Stop the MQTT bridge gracefully.
+    
+        Disconnects from the broker and stops state monitoring.
+        """
         self.log.info(
             "Stopping MQTT bridge"
         )
@@ -97,7 +135,12 @@ class MQTTBridge:
         flags,
         rc,
     ):
-
+        """
+        MQTT connection callback.
+    
+        Called by paho after connection establishment.
+        Subscribes to command topics and initializes cameras.
+        """
         if rc != 0:
             self.log.error(
                 "MQTT connection failed: %s",
@@ -123,8 +166,8 @@ class MQTTBridge:
 
         # Connect cameras after MQTT is ready
         for camera in self.cameras.values():
-            self.discovery.publish_camera(camera)
             self._connect_camera(camera)
+            self.discovery.publish_camera(camera)
         
         self.poll_thread = threading.Thread(
             target=self._state_monitor_loop,
@@ -138,7 +181,17 @@ class MQTTBridge:
         userdata,
         msg,
     ):
-
+        """
+        Handle incoming MQTT commands.
+    
+        Expected topic format:
+    
+            <topic_prefix>/<camera_name>/command
+    
+        Example:
+    
+            home/camera/sonoff_pt2/command
+        """
         try:
 
             payload = json.loads(
@@ -154,18 +207,10 @@ class MQTTBridge:
 
             return
 
-
-        parts = msg.topic.split("/")
-
-        # expected:
-        # home/camera/front/command
-
-        if len(parts) < 4:
+        try:
+            camera_name = msg.topic.split("/")[2]
+        except IndexError:
             return
-
-
-        camera_name = parts[-2]
-
 
         camera = self.cameras.get(
             camera_name
@@ -202,7 +247,16 @@ class MQTTBridge:
         camera,
         command,
     ):
-
+        """
+        Execute a PTZ command on a camera.
+    
+        Supported actions:
+        - move
+        - stop
+        - home
+        - preset
+        - set_preset
+        """
         action = command.get(
             "action"
         )
@@ -214,7 +268,7 @@ class MQTTBridge:
             action,
         )
 
-
+        handled = True
         if action == "move":
 
             camera.move(
@@ -260,22 +314,24 @@ class MQTTBridge:
                 ),
             )
 
-
         else:
-
+            handled = False
             self.log.warning(
                 "Unknown action: %s",
                 action,
             )
-
-
-        self.publish_state(
-            camera
-        )
-
+        
+        if handled:
+            self.publish_state(camera)
 
     def publish_state(self, camera, state=None):
-
+        """
+        Publish the current camera state.
+    
+        The state is published as retained MQTT data so
+        Home Assistant receives the last known position
+        after a restart.
+        """
         if state is None:
             state = camera.get_state()
     
@@ -313,7 +369,9 @@ class MQTTBridge:
         )
 
     def _connect_camera(self, camera):
-    
+        """
+        Connect a camera and publish its initial state.
+        """
         try:
             camera.connect()
     
@@ -327,11 +385,15 @@ class MQTTBridge:
             )
 
     def _state_monitor_loop(self):
+        """
+        Background thread monitoring camera positions.
     
+        Polling interval is dynamic:
+        - normal: every STATE_POLL_INTERVAL seconds
+        - while moving: every MOVING_POLL_INTERVAL seconds
+        """
         while self.running:
 
-            self.log.debug("state monitor loop performed")
-    
             for camera in self.cameras.values():
     
                 try:
@@ -351,12 +413,16 @@ class MQTTBridge:
                         camera.name,
                     )
     
-            delay = 5
+            delay = self.STATE_POLL_INTERVAL  
             
             if any(
                 s and s.moving
                 for s in self.state_cache.values()
             ):
-                delay = 0.2
+                delay = self.MOVING_POLL_INTERVAL 
+            
+            self.log.debug(
+                "State monitor cycle completed"
+            )
             
             time.sleep(delay)
