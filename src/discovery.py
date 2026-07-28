@@ -43,7 +43,7 @@ class DiscoveryPublisher:
             camera: Camera implementation.
         """
         device = {
-            "identifiers": [f"ptz_{camera.name}"],
+            "identifiers": [ camera.device_id ],
             "name": camera.name.replace("_", " ").title(),
             "manufacturer": camera.manufacturer,
             "model": camera.model,
