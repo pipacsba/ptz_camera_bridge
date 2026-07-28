@@ -50,10 +50,12 @@ class Camera(ABC):
         name,
         manufacturer="Unknown",
         model="Unknown",
+        device_id=None,
     ):
         self.name = name
         self.manufacturer = manufacturer
         self.model = model
+        self.device_id = device_id or f"ptz_{name}"
 
 
     @abstractmethod
