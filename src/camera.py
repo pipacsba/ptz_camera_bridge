@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 # camera.py
+#
+# Abstract camera interface used by the MQTT PTZ bridge.
+#
+# Each camera implementation (Thingino, ONVIF, etc.) must inherit from
+# Camera and implement the methods defined below. The bridge interacts
+# exclusively with this interface and is therefore independent of the
+# underlying camera protocol.
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -7,6 +14,13 @@ from dataclasses import dataclass
 
 @dataclass
 class PTZPosition:
+    """
+    Current PTZ position reported by the camera.
+
+    Values are implementation-defined. They typically represent the
+    normalized pan, tilt and zoom coordinates exposed by the camera.
+    """
+
     pan: float | None = None
     tilt: float | None = None
     zoom: float | None = None
@@ -14,6 +28,10 @@ class PTZPosition:
 
 @dataclass
 class CameraState:
+    """
+    Current operational state of the camera.
+    """
+
     position: PTZPosition | None = None
     moving: bool = False
 
@@ -22,9 +40,17 @@ class Camera(ABC):
     """
     Abstract camera interface.
 
-    All camera implementations must provide these methods.
+    The MQTT bridge communicates only through this interface, allowing
+    different camera implementations to be added without changing the
+    bridge itself.
     """
-    def __init__(self, name, manufacturer="Unknown", model="Unknown"):
+
+    def __init__(
+        self,
+        name,
+        manufacturer="Unknown",
+        model="Unknown",
+    ):
         self.name = name
         self.manufacturer = manufacturer
         self.model = model
@@ -33,7 +59,9 @@ class Camera(ABC):
     @abstractmethod
     def connect(self):
         """
-        Establish connection to the camera.
+        Establish a connection to the camera.
+
+        Called during bridge startup or after reconnect.
         """
         pass
 
@@ -41,7 +69,7 @@ class Camera(ABC):
     @abstractmethod
     def disconnect(self):
         """
-        Close connection to the camera.
+        Close the connection to the camera and release resources.
         """
         pass
 
@@ -51,12 +79,13 @@ class Camera(ABC):
         self,
         pan: float = 0,
         tilt: float = 0,
-        zoom: float = 0
+        zoom: float = 0,
     ):
         """
-        Relative movement.
+        Move the camera.
 
-        Positive/negative direction depends on the implementation.
+        The interpretation of the supplied coordinates (relative or
+        absolute) is implementation-specific.
         """
         pass
 
@@ -64,7 +93,7 @@ class Camera(ABC):
     @abstractmethod
     def stop(self):
         """
-        Stop any active movement.
+        Immediately stop any active PTZ movement.
         """
         pass
 
@@ -72,7 +101,7 @@ class Camera(ABC):
     @abstractmethod
     def home(self):
         """
-        Move to home position.
+        Move the camera to its configured home position.
         """
         pass
 
@@ -80,7 +109,7 @@ class Camera(ABC):
     @abstractmethod
     def goto_preset(self, preset):
         """
-        Move to a stored preset.
+        Move the camera to a previously stored preset.
         """
         pass
 
@@ -88,7 +117,7 @@ class Camera(ABC):
     @abstractmethod
     def set_preset(self, preset, name):
         """
-        Store current position as preset.
+        Store the current camera position as a preset.
         """
         pass
 
@@ -96,6 +125,8 @@ class Camera(ABC):
     @abstractmethod
     def get_state(self) -> CameraState:
         """
-        Return current camera state.
+        Return the current camera state.
+
+        This method should never modify the camera state.
         """
         pass
