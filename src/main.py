@@ -57,6 +57,7 @@ def build_cameras(config):
                 manufacturer=camera_cfg.manufacturer,
                 model=camera_cfg.model,
                 device_id=camera_cfg.device_id,
+                mac=camera_cfg.mac,
             )
 
         else:
