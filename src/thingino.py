@@ -365,12 +365,6 @@ class ThinginoCamera(Camera):
         return token
 
     def get_presets(self):
-        """
-        Return available ONVIF presets.
-    
-        Returns:
-            Dictionary mapping preset names to tokens.
-        """
     
         self._ensure_connected()
     
@@ -382,7 +376,9 @@ class ThinginoCamera(Camera):
     
         presets = self.ptz.GetPresets(request)
     
-        return {
+        self.presets = {
             preset.Name: preset.token
             for preset in presets
         }
+    
+        return self.presets
