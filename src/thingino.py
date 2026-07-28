@@ -64,6 +64,7 @@ class ThinginoCamera(Camera):
         self.profile_token = None
         self.mac = None
 
+        self.presets = {}
 
     def connect(self):
         """
