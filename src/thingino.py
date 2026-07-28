@@ -113,6 +113,8 @@ class ThinginoCamera(Camera):
             self.profile_token,
         )
 
+        self.get_presets()
+
 
     def disconnect(self):
         """
@@ -342,3 +344,24 @@ class ThinginoCamera(Camera):
             type(response),
             response,
         )
+
+    def get_presets(self):
+    
+        self._ensure_connected()
+    
+        request = self.ptz.create_type(
+            "GetPresets"
+        )
+    
+        request.ProfileToken = self.profile_token
+    
+        presets = self.ptz.GetPresets(request)
+    
+        for preset in presets:
+            self.log.info(
+                "Preset: token=%s name=%s",
+                preset.token,
+                preset.Name,
+            )
+    
+        return presets
