@@ -226,7 +226,7 @@ class ThinginoCamera(Camera):
         target_tilt = current_tilt - tilt
 
         self.log.info(
-            "Move request pan=%s tilt=%s current=(%s,%s) target=(%s,%s)",
+            "Move request pan=%s tilt=%s current=(%s,%s) delta=(%s,%s)",
             pan,
             tilt,
             current_pan,
