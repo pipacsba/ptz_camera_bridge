@@ -369,7 +369,7 @@ class ThinginoCamera(Camera):
     
         presets = self.ptz.GetPresets(request)
 
-        self.log.info(
+        self.log.debug(
             "Available presets are: %s",
             presets,
         )
