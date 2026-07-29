@@ -225,9 +225,8 @@ class ThinginoCamera(Camera):
         target_pan = pan - current_pan
         target_tilt = current_tilt - tilt
 
-        self.log.debug(
-            "Move request pan=%s tilt=%s "
-            "current=(%s,%s) delta=(%s,%s)",
+        self.log.info(
+            "Move request pan=%s tilt=%s current=(%s,%s) target=(%s,%s)",
             pan,
             tilt,
             current_pan,
@@ -269,7 +268,7 @@ class ThinginoCamera(Camera):
 
         self.ptz.Stop(request)
 
-        self.log.debug(
+        self.log.info(
             "Stopping PTZ movement"
         )
 
@@ -296,7 +295,7 @@ class ThinginoCamera(Camera):
 
         self.ptz.AbsoluteMove(request)
         
-        self.log.debug(
+        self.log.info(
             "Moving camera to home position"
         )
 
@@ -320,6 +319,10 @@ class ThinginoCamera(Camera):
         request.PresetToken = self.presets[preset]
     
         self.ptz.GotoPreset(request)
+        self.log.info(
+            "Moving camera to %s preset",
+            preset,
+        )
 
     def set_preset(self, name):
     
