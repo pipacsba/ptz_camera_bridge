@@ -272,7 +272,7 @@ class MQTTBridge:
         )
 
 
-        self.log.info(
+        self.log.debug(
             "Camera %s action %s",
             camera.name,
             action,
