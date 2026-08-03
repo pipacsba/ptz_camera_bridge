@@ -211,9 +211,7 @@ class DiscoveryPublisher:
                 f"{self.topic_prefix}/"
                 f"{camera.name}/command"
             ),
-            "value_template": (
-                "{{ value_json.preset }}"
-            ),
+            "value_template": "{{ value_json.preset if value_json.preset is defined else '' }}",
             "command_template": (
                 '{"action":"goto_preset","name":"{{ value }}"}'
             ),
