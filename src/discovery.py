@@ -54,7 +54,7 @@ class DiscoveryPublisher:
             device["connections"] = [
                 ("mac", camera.mac),
             ]
-        
+
         log.info(
             "Device to be published is %s",
             device,
@@ -178,7 +178,7 @@ class DiscoveryPublisher:
             "Published discovery topic %s",
             topic,
         )
-        
+
         self.client.publish(
             topic,
             json.dumps(payload),
@@ -187,7 +187,14 @@ class DiscoveryPublisher:
         )
 
     def publish_select(self, camera, presets):
-    
+        """
+        Publish a select entity.
+
+        Args:
+            camera: Camera instance.
+            presets: list of camera stored preset pozitions
+        """
+
         topic = (
             f"{self.DISCOVERY_PREFIX}/select/"
             f"{camera.name}_preset/config"
@@ -199,7 +206,7 @@ class DiscoveryPublisher:
             "manufacturer": camera.manufacturer,
             "model": camera.model,
         }
-    
+
         payload = {
             "name": f"{camera.name.title()} Preset",
             "unique_id": f"ptz_{camera.name}_preset",
@@ -226,7 +233,7 @@ class DiscoveryPublisher:
             "Published discovery topic %s",
             topic,
         )
-    
+
         self.client.publish(
             topic,
             json.dumps(payload),
