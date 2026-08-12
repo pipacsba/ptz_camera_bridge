@@ -40,7 +40,7 @@ class ThinginoCamera(Camera):
         manufacturer="Thingino",
         model="Unknown",
         device_id=None,
-        _mac=None,
+        mac=None,
     ):
         super().__init__(
             name=name,
@@ -53,6 +53,7 @@ class ThinginoCamera(Camera):
         self.port = port
         self.username = username
         self.password = password
+        self.mac = mac
 
         self.log = logging.getLogger(
             f"camera.{name}"
@@ -62,7 +63,6 @@ class ThinginoCamera(Camera):
         self.ptz = None
         self.media = None
         self.profile_token = None
-        self.mac = None
         self.devicemgmt = None
         self.presets = {}
 
