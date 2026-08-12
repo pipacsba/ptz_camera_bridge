@@ -15,7 +15,7 @@ import sys
 from config import Config
 from mqtt import MQTTBridge
 from thingino import ThinginoCamera
-from discovery import DiscoveryPublisher
+# from discovery import DiscoveryPublisher
 
 
 def setup_logging():
@@ -137,4 +137,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
