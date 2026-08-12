@@ -433,13 +433,13 @@ class MQTTBridge:
                         camera.name,
                     )
 
-            delay = self.STATE_POLL_INTERVAL  
+            delay = self.STATE_POLL_INTERVAL
 
             if any(
                 s and s.moving
                 for s in self.state_cache.values()
             ):
-                delay = self.MOVING_POLL_INTERVAL 
+                delay = self.MOVING_POLL_INTERVAL
 
             self.log.debug(
                 "State monitor cycle completed"
