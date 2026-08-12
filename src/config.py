@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
+'''
 # config.py
 #
 # Configuration loader for the MQTT PTZ bridge.
 #
 # Reads the YAML configuration file, validates required settings,
 # and exposes the parsed configuration as strongly typed dataclasses.
+'''
 
 from dataclasses import dataclass
 from pathlib import Path
-import yaml
 import logging
+import yaml
+
 
 log = logging.getLogger(__name__)
-
 
 @dataclass
 class MQTTConfig:
@@ -69,7 +71,7 @@ class Config:
             "Loading configuration from %s",
             self.filename,
         )
-        
+
         with self.filename.open(
             "r",
             encoding="utf-8",
