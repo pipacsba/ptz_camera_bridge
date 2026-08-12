@@ -63,7 +63,7 @@ class ThinginoCamera(Camera):
         self.media = None
         self.profile_token = None
         self.mac = None
-
+        self.devicemgmt = None
         self.presets = {}
 
     def connect(self):
@@ -85,16 +85,16 @@ class ThinginoCamera(Camera):
         )
 
         self.devicemgmt = self.cam.create_devicemgmt_service()
-        
+
         interfaces = self.devicemgmt.GetNetworkInterfaces()
-        
+
         self.log.debug("Interfaces: %s", interfaces)
-        
+
         for interface in interfaces:
             if interface.Info.HwAddress:
                 self.mac = interface.Info.HwAddress.lower()
                 break
-        
+
         self.ptz = self.cam.create_ptz_service()
         self.media = self.cam.create_media_service()
 
@@ -181,7 +181,7 @@ class ThinginoCamera(Camera):
                 str(move_status.PanTilt)
                 != "IDLE"
             )
-            
+
         self.log.debug(
             "Camera state: pan=%s tilt=%s zoom=%s moving=%s",
             position.pan if position else None,
@@ -294,30 +294,30 @@ class ThinginoCamera(Camera):
         }
 
         self.ptz.AbsoluteMove(request)
-        
+
         self.log.info(
             "Moving camera to home position"
         )
 
 
     def goto_preset(self, preset):
-    
+
         self._ensure_connected()
-    
+
         if preset not in self.presets:
             self.get_presets()
-        
+
         if preset not in self.presets:
             raise ValueError(
                 f"Unknown preset: {preset}"
-            )    
+            )
         request = self.ptz.create_type(
             "GotoPreset"
         )
-    
+
         request.ProfileToken = self.profile_token
         request.PresetToken = self.presets[preset]
-    
+
         self.ptz.GotoPreset(request)
         self.log.info(
             "Moving camera to %s preset",
@@ -325,58 +325,58 @@ class ThinginoCamera(Camera):
         )
 
     def set_preset(self, name):
-    
+
         self._ensure_connected()
-    
+
         existing = self.get_presets()
-    
+
         if name in existing:
             self.log.warning(
                 "Preset '%s' already exists (token=%s)",
                 name,
                 existing[name],
             )
-    
+
             return existing[name]
-    
-    
+
+
         request = self.ptz.create_type(
             "SetPreset"
         )
-    
+
         request.ProfileToken = self.profile_token
         request.PresetName = name
-    
+
         token = self.ptz.SetPreset(request)
-    
+
         self.log.info(
             "Created preset '%s' token=%s",
             name,
             token,
         )
-    
+
         return token
 
     def get_presets(self):
 
         self._ensure_connected()
-    
+
         request = self.ptz.create_type(
             "GetPresets"
         )
-    
+
         request.ProfileToken = self.profile_token
-    
+
         presets = self.ptz.GetPresets(request)
 
         self.log.debug(
             "Available presets are: %s",
             presets,
         )
-    
+
         self.presets = {
             preset.Name: preset.token
             for preset in presets
         }
-    
+
         return self.presets
