@@ -122,7 +122,7 @@ class Camera(ABC):
 
 
     @abstractmethod
-    def set_preset(self, preset, name):
+    def set_preset(self, name):
         """
         Store the current camera position as a preset.
         """
