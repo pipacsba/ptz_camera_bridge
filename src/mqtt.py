@@ -36,7 +36,7 @@ class MQTTBridge:
     # Faster refresh while camera is moving
     # for smoother Home Assistant updates
     MOVING_POLL_INTERVAL = 0.1
-    
+
     def __init__(
         self,
         broker,
@@ -58,7 +58,7 @@ class MQTTBridge:
             cameras: Dictionary containing configured cameras.
         """
 
-        
+
         self.log = logging.getLogger(__name__)
 
         self.broker = broker
@@ -140,9 +140,9 @@ class MQTTBridge:
 
     def _on_connect(
         self,
-        client,
-        userdata,
-        flags,
+        _client,
+        _userdata,
+        _flags,
         rc,
     ):
         """
@@ -178,7 +178,7 @@ class MQTTBridge:
         for camera in self.cameras.values():
             self._connect_camera(camera)
             self.discovery.publish_camera(camera)
-        
+
         self.poll_thread = threading.Thread(
             target=self._state_monitor_loop,
             daemon=True,
@@ -187,8 +187,8 @@ class MQTTBridge:
 
     def _on_message(
         self,
-        client,
-        userdata,
+        _client,
+        _userdata,
         msg,
     ):
         """
@@ -314,14 +314,14 @@ class MQTTBridge:
             )
 
         elif action == "set_preset":
-        
+
             name = command.get("name")
-        
+
             if not name:
                 raise ValueError(
                     "set_preset requires 'name'"
                 )
-        
+
             camera.set_preset(name)
 
         else:
@@ -330,7 +330,7 @@ class MQTTBridge:
                 "Unknown action: %s",
                 action,
             )
-        
+
         if handled:
             self.publish_state(camera)
 
@@ -344,7 +344,7 @@ class MQTTBridge:
         """
         if state is None:
             state = camera.get_state()
-    
+
         self.state_cache[camera.name] = state
 
         payload = {
@@ -379,23 +379,23 @@ class MQTTBridge:
         )
 
     def _connect_camera(self, camera):
-    
+
         try:
             camera.connect()
-    
+
             # Publish initial state
             state = camera.get_state()
             self.publish_state(camera, state)
-    
+
             # Publish preset selector if supported
             presets = camera.get_presets()
-    
+
             if presets:
                 self.discovery.publish_select(
                     camera,
                     presets,
                 )
-    
+
         except Exception:
             self.log.exception(
                 "Camera connection failed: %s",
@@ -414,41 +414,35 @@ class MQTTBridge:
         self.log.info(
             "Starting camera state monitor"
         )
-        
+
         while self.running:
 
             for camera in self.cameras.values():
-    
                 try:
-    
                     state = camera.get_state()
-    
                     previous = self.state_cache.get(camera.name)
-    
                     if previous != state:
                         self.log.debug(
                             "State change detected for %s",
                             camera.name,
                         )
                         self.publish_state(camera, state)
-    
                 except Exception:
-    
                     self.log.exception(
                         "Polling %s failed",
                         camera.name,
                     )
-    
+
             delay = self.STATE_POLL_INTERVAL  
-            
+
             if any(
                 s and s.moving
                 for s in self.state_cache.values()
             ):
                 delay = self.MOVING_POLL_INTERVAL 
-            
+
             self.log.debug(
                 "State monitor cycle completed"
             )
-            
+
             time.sleep(delay)
