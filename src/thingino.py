@@ -40,7 +40,7 @@ class ThinginoCamera(Camera):
         manufacturer="Thingino",
         model="Unknown",
         device_id=None,
-        mac=None,
+        _mac=None,
     ):
         super().__init__(
             name=name,
